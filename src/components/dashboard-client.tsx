@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Link from "next/link";
+import { useState, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import type { Scenario } from "@/types/game";
 import { ScenarioCard } from "@/components/scenario-card";
+import { ThreatMapBackground } from "@/components/threat-map-background";
+import { useGameStore } from "@/lib/store";
+import { useOnboardingStore } from "@/lib/onboarding-store";
 import {
   Shield,
   Search,
@@ -40,6 +43,37 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string>("All Scenarios");
   const [sortBy, setSortBy] = useState<string>("Recommended");
+  const router = useRouter();
+  const { isSimulationActive, activeScenarioId, phase, resetSimulation } =
+    useGameStore();
+  const { resetOnboarding } = useOnboardingStore();
+
+  // Check if there's an active, in-progress simulation session
+  const hasActiveSession =
+    isSimulationActive &&
+    activeScenarioId !== null &&
+    phase !== "idle" &&
+    phase !== "victory" &&
+    phase !== "gameover";
+
+  const handleQuickStart = useCallback(() => {
+    if (hasActiveSession && activeScenarioId) {
+      // Resume the active session
+      router.push(`/game/${activeScenarioId}`);
+    } else if (scenarios.length > 0) {
+      // Fresh start with the first scenario
+      resetSimulation();
+      resetOnboarding();
+      router.push(`/game/${scenarios[0].meta.id}/setup`);
+    }
+  }, [
+    hasActiveSession,
+    activeScenarioId,
+    scenarios,
+    router,
+    resetSimulation,
+    resetOnboarding,
+  ]);
 
   const filteredScenarios = useMemo(() => {
     let filtered = [...scenarios];
@@ -83,7 +117,8 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
   }, [scenarios, searchQuery, activeFilter, sortBy]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent relative">
+      <ThreatMapBackground />
       {/* ---- Top Navigation ---- */}
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#334155] bg-background/95 backdrop-blur px-6 py-3">
         <div className="flex items-center gap-8">
@@ -167,17 +202,13 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
               <Download className="h-4 w-4" />
               Export Report
             </button>
-            <Link
-              href={
-                scenarios.length > 0
-                  ? `/game/${scenarios[0].meta.id}/setup`
-                  : "#"
-              }
+            <button
+              onClick={handleQuickStart}
               className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-medium shadow-lg shadow-primary/20 transition-all"
             >
               <PlayCircle className="h-4 w-4" />
-              Quick Start
-            </Link>
+              {hasActiveSession ? "Resume Session" : "Quick Start"}
+            </button>
           </div>
         </div>
 

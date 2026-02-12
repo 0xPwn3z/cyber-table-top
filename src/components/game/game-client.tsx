@@ -43,6 +43,7 @@ export function GameClient({ scenario }: GameClientProps) {
     tickTimer,
     advanceToNextInject,
     resetGame,
+    resetSimulation,
   } = useGameStore();
 
   // -- Derived state --
@@ -90,10 +91,10 @@ export function GameClient({ scenario }: GameClientProps) {
   }, [resetGame]);
 
   const handleReset = useCallback(() => {
-    resetGame();
+    resetSimulation();
     setConfirmingReset(false);
     router.push("/");
-  }, [resetGame, router]);
+  }, [resetSimulation, router]);
 
   const handleTick = useCallback(() => {
     tickTimer();

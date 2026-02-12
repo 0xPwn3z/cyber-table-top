@@ -1,13 +1,17 @@
 "use client";
 
-import Link from "next/link";
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import type { Scenario } from "@/types/game";
+import { useGameStore } from "@/lib/store";
+import { useOnboardingStore } from "@/lib/onboarding-store";
 import {
   Shield,
   Clock,
   BarChart2,
   Users,
   ArrowRight,
+  PlayCircle,
   Skull,
   Bug,
   Fingerprint,
@@ -85,12 +89,36 @@ interface ScenarioCardProps {
 
 export function ScenarioCard({ scenario }: ScenarioCardProps) {
   const { meta, configuration, injects } = scenario;
+  const router = useRouter();
+  const { isSimulationActive, activeScenarioId, phase, resetSimulation } =
+    useGameStore();
+  const { resetOnboarding } = useOnboardingStore();
   const diffBadge = getDifficultyBadge(meta.difficulty);
   const iconBgMap: Record<string, string> = {
     Hard: "bg-red-500/10",
     Medium: "bg-yellow-500/10",
     Easy: "bg-blue-500/10",
   };
+
+  // Check if this specific scenario has an active, in-progress session
+  const isRunning =
+    isSimulationActive &&
+    activeScenarioId === meta.id &&
+    phase !== "idle" &&
+    phase !== "victory" &&
+    phase !== "gameover";
+
+  const handleStart = useCallback(() => {
+    if (isRunning) {
+      // Resume the active session
+      router.push(`/game/${activeScenarioId}`);
+    } else {
+      // Fresh start: clear all previous state, force Step 1
+      resetSimulation();
+      resetOnboarding();
+      router.push(`/game/${meta.id}/setup`);
+    }
+  }, [isRunning, activeScenarioId, meta.id, router, resetSimulation, resetOnboarding]);
 
   return (
     <div className="group relative flex flex-col rounded-xl border border-[#334155] bg-surface p-6 shadow-sm hover:shadow-md hover:border-primary/50 transition-all duration-300">
@@ -136,14 +164,23 @@ export function ScenarioCard({ scenario }: ScenarioCardProps) {
         </div>
       </div>
 
-      {/* Start button */}
-      <Link
-        href={`/game/${meta.id}/setup`}
+      {/* Start / Resume button */}
+      <button
+        onClick={handleStart}
         className="w-full py-2.5 px-4 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg shadow-sm shadow-primary/20 transition-all flex items-center justify-center gap-2 group-hover:-translate-y-0.5"
       >
-        Start Simulation
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+        {isRunning ? (
+          <>
+            Resume Simulation
+            <PlayCircle className="h-4 w-4" />
+          </>
+        ) : (
+          <>
+            Start Simulation
+            <ArrowRight className="h-4 w-4" />
+          </>
+        )}
+      </button>
     </div>
   );
 }

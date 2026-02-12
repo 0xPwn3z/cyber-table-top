@@ -70,6 +70,8 @@ export interface Scenario {
 // Game State (Zustand Store Shape)
 // ============================================================================
 
+import type { OnboardingConfig } from "@/types/onboarding";
+
 /** Record of a single decision made during gameplay */
 export interface DecisionRecord {
   injectId: string;
@@ -97,6 +99,11 @@ export interface GameState {
   selectedRole: Role | null;
   phase: GamePhase;
 
+  // ---- Session Lifecycle ----
+  isSimulationActive: boolean;
+  activeScenarioId: string | null;
+  onboardingConfig: OnboardingConfig | null;
+
   // ---- Progress ----
   currentInjectIndex: number;
   scores: ScoreTriad;
@@ -107,10 +114,12 @@ export interface GameState {
   timerRunning: boolean;
 
   // ---- Actions ----
+  commitOnboarding: (scenarioId: string, config: OnboardingConfig) => void;
   startGame: (scenario: Scenario, role: Role) => void;
   makeDecision: (optionId: string) => void;
   handleTimeout: () => void;
   tickTimer: () => void;
   advanceToNextInject: () => void;
   resetGame: () => void;
+  resetSimulation: () => void;
 }

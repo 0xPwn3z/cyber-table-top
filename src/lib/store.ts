@@ -8,7 +8,9 @@ import type {
   Inject,
   Option,
 } from "@/types/game";
+import type { OnboardingConfig } from "@/types/onboarding";
 import { clampScore } from "@/lib/utils";
+import { useOnboardingStore } from "@/lib/onboarding-store";
 
 // ============================================================================
 // Default "Inaction" penalty applied when the timer expires
@@ -58,7 +60,24 @@ export const useGameStore = create<GameState>((set, get) => ({
   timerSeconds: 0,
   timerRunning: false,
 
+  // ---- Session Lifecycle ----
+  isSimulationActive: false,
+  activeScenarioId: null,
+  onboardingConfig: null,
+
   // ---- Actions ----
+
+  /**
+   * Commit onboarding config from the temp wizard into the active session.
+   * This is the "draft → committed" transition.
+   */
+  commitOnboarding: (scenarioId: string, config: OnboardingConfig) => {
+    set({
+      isSimulationActive: true,
+      activeScenarioId: scenarioId,
+      onboardingConfig: { ...config },
+    });
+  },
 
   /**
    * Initialize a new game session with the given scenario and role.
@@ -198,10 +217,35 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   /**
-   * Reset the entire game state to idle.
+   * Reset the in-game state to idle (replay the same scenario from scratch).
+   * Keeps isSimulationActive and onboardingConfig intact so the session can
+   * be re-entered from the briefing screen.
    */
   resetGame: () => {
     set({
+      scenario: null,
+      selectedRole: null,
+      phase: "idle",
+      currentInjectIndex: 0,
+      scores: { security: 50, business: 50, reputation: 50 },
+      history: [],
+      timerSeconds: 0,
+      timerRunning: false,
+    });
+  },
+
+  /**
+   * Full reset — clears the entire simulation lifecycle including committed
+   * onboarding config and the temp onboarding store.
+   */
+  resetSimulation: () => {
+    // Clear the temp onboarding store as well
+    useOnboardingStore.getState().resetOnboarding();
+
+    set({
+      isSimulationActive: false,
+      activeScenarioId: null,
+      onboardingConfig: null,
       scenario: null,
       selectedRole: null,
       phase: "idle",
