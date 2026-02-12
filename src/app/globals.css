@@ -1,0 +1,262 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   CyberTabletop — Global CSS Variables & Dark Mode Cyber Aesthetic
+   Tailwind CSS v4 — using @theme inline for design tokens
+   ============================================================================ */
+
+:root {
+  /* Base surfaces — matching UX reference */
+  --background: #0f172a;
+  --foreground: #e2e8f0;
+  --surface: #1e293b;
+  --surface-hover: #334155;
+  --border: #334155;
+  --border-hover: #475569;
+
+  /* Primary — Blue accent from UX */
+  --primary: #135bec;
+  --primary-hover: #0e4ac7;
+  --primary-foreground: #ffffff;
+
+  /* Score Triad Colors — Security / Business / Reputation */
+  --color-sec: #135bec;
+  --color-sec-bg: #0e3a8c;
+  --color-sec-glow: #3b82f6;
+
+  --color-biz: #eab308;
+  --color-biz-bg: #713f12;
+  --color-biz-glow: #facc15;
+
+  --color-rep: #10b981;
+  --color-rep-bg: #064e3b;
+  --color-rep-glow: #34d399;
+
+  /* UI accent */
+  --accent: #135bec;
+  --accent-foreground: #ffffff;
+
+  /* Danger / warning */
+  --destructive: #ef4444;
+  --destructive-bg: #450a0a;
+
+  /* Muted text */
+  --muted: #64748b;
+  --muted-foreground: #94a3b8;
+
+  /* Card */
+  --card: #1e293b;
+  --card-foreground: #e2e8f0;
+
+  /* Popover / dialog */
+  --popover: #1e293b;
+  --popover-foreground: #e2e8f0;
+
+  /* Input / ring */
+  --input: #334155;
+  --ring: #135bec;
+
+  /* Radius */
+  --radius: 0.75rem;
+
+  /* Severity Colors */
+  --critical: #ef4444;
+  --high: #f97316;
+  --medium: #eab308;
+  --low: #3b82f6;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-sec: var(--color-sec);
+  --color-sec-bg: var(--color-sec-bg);
+  --color-sec-glow: var(--color-sec-glow);
+
+  --color-biz: var(--color-biz);
+  --color-biz-bg: var(--color-biz-bg);
+  --color-biz-glow: var(--color-biz-glow);
+
+  --color-rep: var(--color-rep);
+  --color-rep-bg: var(--color-rep-bg);
+  --color-rep-glow: var(--color-rep-glow);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-bg: var(--destructive-bg);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-critical: var(--critical);
+  --color-high: var(--high);
+  --color-medium: var(--medium);
+  --color-low: var(--low);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --font-sans: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, monospace;
+}
+
+/* ============================================================================
+   Base Styles
+   ============================================================================ */
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================================
+   Scrollbar Styling (Cyber aesthetic)
+   ============================================================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ============================================================================
+   Glow / Pulse Animations
+   ============================================================================ */
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes timer-urgency {
+  0%, 100% { box-shadow: 0 0 8px var(--destructive); }
+  50% { box-shadow: 0 0 20px var(--destructive); }
+}
+
+@keyframes pulse-fast {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-timer-urgency {
+  animation: timer-urgency 0.8s ease-in-out infinite;
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out;
+}
+
+/* ============================================================================
+   Score Bar Glow Effects
+   ============================================================================ */
+
+.score-bar-sec {
+  --progress-color: var(--color-sec);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-sec) 30%, transparent);
+}
+
+.score-bar-biz {
+  --progress-color: var(--color-biz);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-biz) 30%, transparent);
+}
+
+.score-bar-rep {
+  --progress-color: var(--color-rep);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-rep) 30%, transparent);
+}
+
+/* ============================================================================
+   Background Grid Pattern (matching UX reference)
+   ============================================================================ */
+
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(to right, #80808012 1px, transparent 1px),
+    linear-gradient(to bottom, #80808012 1px, transparent 1px);
+  background-size: 24px 24px;
+}

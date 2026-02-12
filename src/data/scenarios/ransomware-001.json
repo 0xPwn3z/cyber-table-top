@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "id": "scenario_001_ransomware",
+    "title": "Operation Blackout: Ransomware",
+    "description": "A critical server in HR has been encrypted. The attackers are demanding 50 BTC. The clock is ticking — your team must contain, communicate, and recover before the damage becomes irreversible.",
+    "difficulty": "Hard",
+    "duration_minutes": 15,
+    "tags": ["Ransomware", "Negotiation", "Crisis Mgmt", "Incident Response"],
+    "version": "1.0"
+  },
+  "configuration": {
+    "playable_roles": ["CISO", "SOC_LEAD", "IT_MANAGER"],
+    "starting_stats": {
+      "security": 90,
+      "business": 100,
+      "reputation": 100
+    }
+  },
+  "injects": [
+    {
+      "id": "step_01",
+      "order": 1,
+      "timestamp_display": "Day 1 — 09:15 AM",
+      "context": "SOC Alert: Highly anomalous outbound traffic detected from the HR file server to a known C2 IP address in Eastern Europe. Multiple .encrypted file extensions appearing across shared drives.",
+      "question": "What is your immediate containment strategy?",
+      "timer_seconds": 30,
+      "options": [
+        {
+          "id": "s1_opt_a",
+          "label": "Sever the internet connection for the entire HQ immediately.",
+          "feedback_text": "Effective containment — the lateral spread is stopped. However, you just halted all business operations across HQ. The CEO is furious, and sales contracts worth $2M are stuck mid-signature.",
+          "impact": { "security": 20, "business": -40, "reputation": -5 }
+        },
+        {
+          "id": "s1_opt_b",
+          "label": "Isolate only the HR VLAN and begin forensic imaging.",
+          "feedback_text": "Good balance. You contained the threat to HR without disrupting the sales or finance departments. The SOC team begins forensic imaging of the compromised server.",
+          "impact": { "security": 10, "business": -5, "reputation": 0 }
+        },
+        {
+          "id": "s1_opt_c",
+          "label": "Monitor the traffic for 15 more minutes to gather threat intelligence.",
+          "feedback_text": "Critical error. In those 15 minutes, the ransomware beacon spread to the Finance subnet. Three additional servers are now encrypted, and the attackers now have access to payroll data.",
+          "impact": { "security": -30, "business": -10, "reputation": -10 }
+        }
+      ]
+    },
+    {
+      "id": "step_02",
+      "order": 2,
+      "timestamp_display": "Day 1 — 10:30 AM",
+      "context": "The attackers have posted a sample of employee PII data on a dark-web leak site. Journalists from two national outlets are calling your PR department for comment.",
+      "question": "How do you handle the external communication?",
+      "timer_seconds": 45,
+      "options": [
+        {
+          "id": "s2_opt_a",
+          "label": "Issue a holding statement: 'We are aware of an incident and are actively investigating with law enforcement.'",
+          "feedback_text": "Standard procedure. The holding statement keeps panic low while acknowledging the situation. Your legal team advises this was the right call under GDPR Article 33 notification timelines.",
+          "impact": { "security": 0, "business": -5, "reputation": -5 }
+        },
+        {
+          "id": "s2_opt_b",
+          "label": "Deny everything publicly until the investigation is complete.",
+          "feedback_text": "Terrible move. The leaked data is already verified by journalists. Your denial makes the company look dishonest, and #DataBreach starts trending on social media.",
+          "impact": { "security": 0, "business": -10, "reputation": -40 }
+        },
+        {
+          "id": "s2_opt_c",
+          "label": "Proactively disclose the breach with a detailed transparency report.",
+          "feedback_text": "Bold and transparent. While it causes short-term stock volatility, analysts praise the company's mature incident response posture. Affected employees appreciate the honesty.",
+          "impact": { "security": 0, "business": -15, "reputation": 10 }
+        }
+      ]
+    },
+    {
+      "id": "step_03",
+      "order": 3,
+      "timestamp_display": "Day 1 — 02:00 PM",
+      "context": "The attackers have sent a ransom note demanding 50 BTC (~$2.1M). They claim to have exfiltrated 150GB of data including employee SSNs, medical records, and executive emails. They threaten to publish everything in 48 hours.",
+      "question": "How do you respond to the ransom demand?",
+      "timer_seconds": 60,
+      "options": [
+        {
+          "id": "s3_opt_a",
+          "label": "Engage a professional ransomware negotiator to buy time while the DFIR team works on recovery.",
+          "feedback_text": "Smart move. The negotiator keeps the threat actors talking, extending the deadline by 72 hours. Meanwhile, the DFIR team discovers that 60% of the encrypted data can be recovered from offline backups.",
+          "impact": { "security": 5, "business": -5, "reputation": 5 }
+        },
+        {
+          "id": "s3_opt_b",
+          "label": "Pay the ransom immediately to protect employee data.",
+          "feedback_text": "You received a decryption key, but it only works on 70% of the files. Worse, paying has put a target on your back — the same group will likely attack again. Law enforcement is disappointed.",
+          "impact": { "security": -15, "business": -20, "reputation": -10 }
+        },
+        {
+          "id": "s3_opt_c",
+          "label": "Refuse to pay and focus entirely on restoring from backups.",
+          "feedback_text": "The attackers publish the stolen data after 48 hours. However, your backup strategy works — systems are restored within 36 hours. The board commends your firm stance against extortion.",
+          "impact": { "security": 10, "business": -10, "reputation": -15 }
+        }
+      ]
+    },
+    {
+      "id": "step_04",
+      "order": 4,
+      "timestamp_display": "Day 2 — 09:00 AM",
+      "context": "Your DFIR team has identified the initial attack vector: a phishing email with a malicious macro sent to an HR coordinator 5 days ago. The attacker used stolen credentials to move laterally via RDP. EDR logs show the attacker had domain admin privileges for 3 days.",
+      "question": "What is your priority for recovery and hardening?",
+      "timer_seconds": 45,
+      "options": [
+        {
+          "id": "s4_opt_a",
+          "label": "Force a company-wide password reset, disable RDP, and deploy MFA across all privileged accounts.",
+          "feedback_text": "Comprehensive response. The password reset disrupts employee workflows for ~2 hours, but closes the attacker's persistence mechanisms. MFA prevents further credential abuse.",
+          "impact": { "security": 20, "business": -10, "reputation": 5 }
+        },
+        {
+          "id": "s4_opt_b",
+          "label": "Only reset passwords for affected accounts and monitor for re-entry.",
+          "feedback_text": "Insufficient. The attacker had domain admin — they likely created backdoor accounts. Within 6 hours, anomalous activity is detected from a new service account that wasn't in the reset scope.",
+          "impact": { "security": -20, "business": 0, "reputation": -5 }
+        },
+        {
+          "id": "s4_opt_c",
+          "label": "Take all domain controllers offline and rebuild Active Directory from a known-good backup.",
+          "feedback_text": "Nuclear option. Extremely effective at eliminating persistence, but all authentication services are down for 8+ hours. Employees can't log in, email is dead, and VPN access is broken.",
+          "impact": { "security": 25, "business": -30, "reputation": 0 }
+        }
+      ]
+    },
+    {
+      "id": "step_05",
+      "order": 5,
+      "timestamp_display": "Day 3 — 11:00 AM",
+      "context": "The immediate crisis is stabilizing. The board has called an emergency meeting and wants a post-incident action plan. Regulators have sent a formal inquiry letter. Employee morale is low — several key engineers are considering leaving.",
+      "question": "What is your strategic recommendation to the board?",
+      "timer_seconds": 60,
+      "options": [
+        {
+          "id": "s5_opt_a",
+          "label": "Propose a 90-day security overhaul: new EDR, zero-trust architecture, mandatory security training, and hire a dedicated IR team.",
+          "feedback_text": "The board approves a $3M budget for the overhaul. It's expensive, but positions the company as taking security seriously. Regulators note the proactive response favorably.",
+          "impact": { "security": 15, "business": -10, "reputation": 15 }
+        },
+        {
+          "id": "s5_opt_b",
+          "label": "Recommend minimal changes — patch the specific vulnerability and move on. Downplay the incident to minimize cost.",
+          "feedback_text": "Short-sighted. The regulators see through the deflection and issue a formal warning. Employee trust erodes further, and your CISO privately updates their LinkedIn profile.",
+          "impact": { "security": -10, "business": 5, "reputation": -20 }
+        },
+        {
+          "id": "s5_opt_c",
+          "label": "Commission an independent third-party audit and commit to publishing the findings publicly.",
+          "feedback_text": "Transparent and accountable. The audit reveals systemic issues, but the commitment to public disclosure earns praise from the security community. Two key engineers decide to stay.",
+          "impact": { "security": 10, "business": -5, "reputation": 20 }
+        }
+      ]
+    }
+  ]
+}
