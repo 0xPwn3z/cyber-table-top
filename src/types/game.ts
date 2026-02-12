@@ -40,6 +40,7 @@ export interface Inject {
   question: string;
   timer_seconds: number;
   options: Option[];
+  targetRoles?: Role[];
 }
 
 /** Scenario metadata */
@@ -97,6 +98,7 @@ export interface GameState {
   // ---- Data ----
   scenario: Scenario | null;
   selectedRole: Role | null;
+  selectedRoles: Role[];
   phase: GamePhase;
 
   // ---- Session Lifecycle ----
@@ -115,7 +117,7 @@ export interface GameState {
 
   // ---- Actions ----
   commitOnboarding: (scenarioId: string, config: OnboardingConfig) => void;
-  startGame: (scenario: Scenario, role: Role) => void;
+  startGame: (scenario: Scenario, roles: Role[]) => void;
   makeDecision: (optionId: string) => void;
   handleTimeout: () => void;
   tickTimer: () => void;

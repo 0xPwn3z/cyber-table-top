@@ -53,6 +53,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   // ---- Initial State ----
   scenario: null,
   selectedRole: null,
+  selectedRoles: [],
   phase: "idle",
   currentInjectIndex: 0,
   scores: { security: 50, business: 50, reputation: 50 },
@@ -80,15 +81,17 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   /**
-   * Initialize a new game session with the given scenario and role.
+   * Initialize a new game session with the given scenario and roles.
+   * Supports multi-role selection — the first role is stored as primary.
    */
-  startGame: (scenario: Scenario, role: Role) => {
+  startGame: (scenario: Scenario, roles: Role[]) => {
     const firstInject = scenario.injects[0];
-    if (!firstInject) return;
+    if (!firstInject || roles.length === 0) return;
 
     set({
       scenario,
-      selectedRole: role,
+      selectedRole: roles[0],
+      selectedRoles: roles,
       phase: "briefing",
       currentInjectIndex: 0,
       scores: { ...scenario.configuration.starting_stats },
@@ -225,6 +228,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({
       scenario: null,
       selectedRole: null,
+      selectedRoles: [],
       phase: "idle",
       currentInjectIndex: 0,
       scores: { security: 50, business: 50, reputation: 50 },
@@ -248,6 +252,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       onboardingConfig: null,
       scenario: null,
       selectedRole: null,
+      selectedRoles: [],
       phase: "idle",
       currentInjectIndex: 0,
       scores: { security: 50, business: 50, reputation: 50 },

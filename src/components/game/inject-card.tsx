@@ -1,6 +1,6 @@
 "use client";
 
-import type { Inject } from "@/types/game";
+import type { Inject, Role } from "@/types/game";
 import { Badge } from "@/components/ui/badge";
 import {
   AlertTriangle,
@@ -10,8 +10,70 @@ import {
   Eye,
   Zap,
   Scale,
+  Crosshair,
+  Terminal,
+  Briefcase,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// ============================================================================
+// Role visual configuration — maps each role to icon, colors, and label
+// ============================================================================
+
+interface RoleVisual {
+  label: string;
+  icon: React.ReactNode;
+  bg: string;
+  border: string;
+  text: string;
+  glow: string;
+}
+
+const ROLE_VISUALS: Record<Role, RoleVisual> = {
+  CISO: {
+    label: "CISO",
+    icon: <Shield className="h-3.5 w-3.5" />,
+    bg: "bg-indigo-500/15",
+    border: "border-indigo-400/50",
+    text: "text-indigo-400",
+    glow: "shadow-[0_0_12px_rgba(99,102,241,0.25)]",
+  },
+  SOC_LEAD: {
+    label: "SOC ANALYST",
+    icon: <Crosshair className="h-3.5 w-3.5" />,
+    bg: "bg-blue-500/15",
+    border: "border-blue-400/50",
+    text: "text-blue-400",
+    glow: "shadow-[0_0_12px_rgba(59,130,246,0.25)]",
+  },
+  DFIR: {
+    label: "DFIR LEAD",
+    icon: <Terminal className="h-3.5 w-3.5" />,
+    bg: "bg-emerald-500/15",
+    border: "border-emerald-400/50",
+    text: "text-emerald-400",
+    glow: "shadow-[0_0_12px_rgba(16,185,129,0.25)]",
+  },
+  IT_MANAGER: {
+    label: "IT MANAGER",
+    icon: <Briefcase className="h-3.5 w-3.5" />,
+    bg: "bg-amber-500/15",
+    border: "border-amber-400/50",
+    text: "text-amber-400",
+    glow: "shadow-[0_0_12px_rgba(245,158,11,0.25)]",
+  },
+};
+
+/** Joint Command badge for questions targeting all selected roles */
+const JOINT_COMMAND_VISUAL: RoleVisual = {
+  label: "JOINT COMMAND",
+  icon: <Users className="h-3.5 w-3.5" />,
+  bg: "bg-yellow-500/15",
+  border: "border-yellow-400/50",
+  text: "text-yellow-400",
+  glow: "shadow-[0_0_12px_rgba(234,179,8,0.3)]",
+};
 
 interface InjectCardProps {
   inject: Inject;
@@ -19,6 +81,8 @@ interface InjectCardProps {
   totalInjects: number;
   onSelectOption: (optionId: string) => void;
   disabled: boolean;
+  /** The roles the user selected for this session — used to detect "Joint Command" */
+  selectedRoles?: Role[];
 }
 
 /** Assign unique accent colors to options */
@@ -55,7 +119,15 @@ export function InjectCard({
   totalInjects,
   onSelectOption,
   disabled,
+  selectedRoles = [],
 }: InjectCardProps) {
+  // ── Determine which role badges to show ──
+  const targetRoles = inject.targetRoles ?? [];
+  const isJointCommand =
+    selectedRoles.length > 1 &&
+    targetRoles.length > 1 &&
+    selectedRoles.every((r) => targetRoles.includes(r));
+
   return (
     <div className="flex flex-col gap-6">
       {/* ---- Situation Card ---- */}
@@ -79,6 +151,49 @@ export function InjectCard({
 
         {/* Content Area */}
         <div className="w-full md:w-2/3 p-6 flex flex-col justify-center">
+          {/* ── Role Target Badges ── */}
+          {targetRoles.length > 0 && (
+            <div className="flex items-center gap-2 mb-4 animate-in fade-in slide-in-from-left-3 duration-300" key={inject.id}>
+              <span className="text-[10px] font-black tracking-[0.2em] text-slate-600 uppercase mr-1">
+                &gt;&gt; TARGET:
+              </span>
+              {isJointCommand ? (
+                <div
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-3 py-1 rounded-full border font-mono text-[11px] font-bold uppercase tracking-wider transition-all",
+                    JOINT_COMMAND_VISUAL.bg,
+                    JOINT_COMMAND_VISUAL.border,
+                    JOINT_COMMAND_VISUAL.text,
+                    JOINT_COMMAND_VISUAL.glow
+                  )}
+                >
+                  {JOINT_COMMAND_VISUAL.icon}
+                  {JOINT_COMMAND_VISUAL.label}
+                </div>
+              ) : (
+                targetRoles.map((role) => {
+                  const visual = ROLE_VISUALS[role];
+                  if (!visual) return null;
+                  return (
+                    <div
+                      key={role}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full border font-mono text-[11px] font-bold uppercase tracking-wider transition-all",
+                        visual.bg,
+                        visual.border,
+                        visual.text,
+                        visual.glow
+                      )}
+                    >
+                      {visual.icon}
+                      {visual.label}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+
           <div className="flex items-center gap-2 mb-3">
             <Badge variant="critical" className="text-[10px] uppercase">
               Active

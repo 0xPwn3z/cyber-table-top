@@ -38,6 +38,7 @@ export function GameClient({ scenario }: GameClientProps) {
     timerSeconds,
     timerRunning,
     selectedRole,
+    selectedRoles,
     startGame,
     makeDecision,
     tickTimer,
@@ -64,8 +65,8 @@ export function GameClient({ scenario }: GameClientProps) {
 
   // -- Callbacks --
   const handleStart = useCallback(
-    (role: Role) => {
-      startGame(scenario, role);
+    (roles: Role[]) => {
+      startGame(scenario, roles);
       // Immediately transition from briefing to playing after a small delay
       // to let the user see the briefing → playing transition
       setTimeout(() => {
@@ -123,6 +124,7 @@ export function GameClient({ scenario }: GameClientProps) {
           timerRunning={false}
           history={history}
           selectedRole={selectedRole}
+          selectedRoles={selectedRoles}
           onDecision={handleDecision}
           onTick={handleTick}
           disabled
@@ -156,6 +158,7 @@ export function GameClient({ scenario }: GameClientProps) {
           timerRunning={false}
           history={history}
           selectedRole={selectedRole}
+          selectedRoles={selectedRoles}
           onDecision={handleDecision}
           onTick={handleTick}
           disabled
@@ -181,6 +184,7 @@ export function GameClient({ scenario }: GameClientProps) {
       timerRunning={timerRunning}
       history={history}
       selectedRole={selectedRole}
+      selectedRoles={selectedRoles}
       onDecision={handleDecision}
       onTick={handleTick}
       disabled={false}
@@ -218,6 +222,7 @@ interface GameLayoutProps {
     timedOut: boolean;
   }>;
   selectedRole: string | null;
+  selectedRoles: string[];
   onDecision: (optionId: string) => void;
   onTick: () => void;
   disabled: boolean;
@@ -237,6 +242,7 @@ function GameLayout({
   timerRunning,
   history,
   selectedRole,
+  selectedRoles,
   onDecision,
   onTick,
   disabled,
@@ -263,11 +269,19 @@ function GameLayout({
           </Badge>
         </div>
         <div className="flex gap-3 items-center">
-          {selectedRole && (
+          {selectedRoles && selectedRoles.length > 0 ? (
+            <div className="flex items-center gap-1.5">
+              {selectedRoles.map((r) => (
+                <Badge key={r} variant="secondary" className="text-xs font-mono">
+                  {r}
+                </Badge>
+              ))}
+            </div>
+          ) : selectedRole ? (
             <Badge variant="secondary" className="text-xs font-mono">
               {selectedRole}
             </Badge>
-          )}
+          ) : null}
 
           {/* Reset Button with Confirmation */}
           {confirmingReset ? (
@@ -346,6 +360,7 @@ function GameLayout({
                   totalInjects={scenario.injects.length}
                   onSelectOption={onDecision}
                   disabled={disabled}
+                  selectedRoles={selectedRoles as Role[]}
                 />
               ) : (
                 <div className="flex items-center justify-center py-20 text-slate-500">

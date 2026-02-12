@@ -5,18 +5,14 @@ import { useRouter } from "next/navigation";
 import type { Scenario } from "@/types/game";
 import { ScenarioCard } from "@/components/scenario-card";
 import { ThreatMapBackground } from "@/components/threat-map-background";
+import { ScenarioUploadModal } from "@/components/scenario-upload-modal";
 import { useGameStore } from "@/lib/store";
 import { useOnboardingStore } from "@/lib/onboarding-store";
 import {
   Shield,
   Search,
   PlayCircle,
-  Download,
-  CheckCircle2,
-  BarChart2,
-  Flame,
-  Timer,
-  TrendingUp,
+  Upload,
   Terminal,
 } from "lucide-react";
 
@@ -43,6 +39,7 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string>("All Scenarios");
   const [sortBy, setSortBy] = useState<string>("Recommended");
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const router = useRouter();
   const { isSimulationActive, activeScenarioId, phase, resetSimulation } =
     useGameStore();
@@ -198,9 +195,12 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
             </p>
           </div>
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-hover rounded-lg text-sm font-medium transition-colors border border-[#334155]">
-              <Download className="h-4 w-4" />
-              Export Report
+            <button
+              onClick={() => setUploadModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-hover rounded-lg text-sm font-medium transition-colors border border-[#334155]"
+            >
+              <Upload className="h-4 w-4" />
+              Upload New Scenario
             </button>
             <button
               onClick={handleQuickStart}
@@ -209,69 +209,6 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
               <PlayCircle className="h-4 w-4" />
               {hasActiveSession ? "Resume Session" : "Quick Start"}
             </button>
-          </div>
-        </div>
-
-        {/* ---- Stats Grid ---- */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-          <div className="bg-surface border border-[#334155] rounded-xl p-5 shadow-sm">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-blue-500/10 rounded-lg">
-                <CheckCircle2 className="h-5 w-5 text-blue-500" />
-              </div>
-              <span className="flex items-center text-xs font-medium text-green-500 bg-green-500/10 px-2 py-1 rounded-full">
-                +12%
-                <TrendingUp className="h-3 w-3 ml-0.5" />
-              </span>
-            </div>
-            <p className="text-slate-400 text-sm font-medium">
-              Completed Simulations
-            </p>
-            <h3 className="text-2xl font-bold mt-1">24</h3>
-          </div>
-          <div className="bg-surface border border-[#334155] rounded-xl p-5 shadow-sm">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-purple-500/10 rounded-lg">
-                <BarChart2 className="h-5 w-5 text-purple-500" />
-              </div>
-              <span className="flex items-center text-xs font-medium text-green-500 bg-green-500/10 px-2 py-1 rounded-full">
-                +5.2%
-                <TrendingUp className="h-3 w-3 ml-0.5" />
-              </span>
-            </div>
-            <p className="text-slate-400 text-sm font-medium">
-              Avg. Response Score
-            </p>
-            <h3 className="text-2xl font-bold mt-1">92%</h3>
-          </div>
-          <div className="bg-surface border border-[#334155] rounded-xl p-5 shadow-sm">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-orange-500/10 rounded-lg">
-                <Flame className="h-5 w-5 text-orange-500" />
-              </div>
-              <span className="flex items-center text-xs font-medium text-slate-400 bg-[#334155] px-2 py-1 rounded-full">
-                Same
-              </span>
-            </div>
-            <p className="text-slate-400 text-sm font-medium">
-              Current Streak
-            </p>
-            <h3 className="text-2xl font-bold mt-1">7 Days</h3>
-          </div>
-          <div className="bg-surface border border-[#334155] rounded-xl p-5 shadow-sm">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-teal-500/10 rounded-lg">
-                <Timer className="h-5 w-5 text-teal-500" />
-              </div>
-              <span className="flex items-center text-xs font-medium text-green-500 bg-green-500/10 px-2 py-1 rounded-full">
-                +2h
-                <TrendingUp className="h-3 w-3 ml-0.5" />
-              </span>
-            </div>
-            <p className="text-slate-400 text-sm font-medium">
-              Training Hours
-            </p>
-            <h3 className="text-2xl font-bold mt-1">48.5h</h3>
           </div>
         </div>
 
@@ -357,6 +294,12 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
           </div>
         )}
       </main>
+
+      {/* ---- Upload Modal ---- */}
+      <ScenarioUploadModal
+        open={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+      />
     </div>
   );
 }
