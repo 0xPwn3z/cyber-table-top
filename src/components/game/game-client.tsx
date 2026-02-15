@@ -47,10 +47,16 @@ export function GameClient({ scenario }: GameClientProps) {
     resetSimulation,
   } = useGameStore();
 
+  // Get the store's filtered scenario (has only role-matching injects)
+  const storeScenario = useGameStore((s) => s.scenario);
+
   // -- Derived state --
+  // Use the store's scenario (filtered by role) for inject navigation
+  const activeInjects = storeScenario?.injects ?? scenario.injects;
+
   const currentInject: Inject | null = useMemo(
-    () => scenario.injects[currentInjectIndex] ?? null,
-    [scenario.injects, currentInjectIndex]
+    () => activeInjects[currentInjectIndex] ?? null,
+    [activeInjects, currentInjectIndex]
   );
 
   const maxTimerSeconds: number = useMemo(
@@ -66,7 +72,20 @@ export function GameClient({ scenario }: GameClientProps) {
   // -- Callbacks --
   const handleStart = useCallback(
     (roles: Role[]) => {
-      startGame(scenario, roles);
+      // Filter injects to only those targeting the selected roles
+      const filteredInjects = scenario.injects.filter((inject) => {
+        // Include injects with no targetRoles (universal questions)
+        if (!inject.targetRoles || inject.targetRoles.length === 0) return true;
+        // Include if at least one targetRole matches a selected role
+        return inject.targetRoles.some((role) => roles.includes(role));
+      });
+
+      const filteredScenario: Scenario = {
+        ...scenario,
+        injects: filteredInjects,
+      };
+
+      startGame(filteredScenario, roles);
       // Immediately transition from briefing to playing after a small delay
       // to let the user see the briefing → playing transition
       setTimeout(() => {
@@ -119,6 +138,7 @@ export function GameClient({ scenario }: GameClientProps) {
           scores={scores}
           currentInject={currentInject}
           currentInjectIndex={currentInjectIndex}
+          totalInjects={activeInjects.length}
           timerSeconds={timerSeconds}
           maxTimerSeconds={maxTimerSeconds}
           timerRunning={false}
@@ -153,6 +173,7 @@ export function GameClient({ scenario }: GameClientProps) {
           scores={scores}
           currentInject={currentInject}
           currentInjectIndex={currentInjectIndex}
+          totalInjects={activeInjects.length}
           timerSeconds={timerSeconds}
           maxTimerSeconds={maxTimerSeconds}
           timerRunning={false}
@@ -179,6 +200,7 @@ export function GameClient({ scenario }: GameClientProps) {
       scores={scores}
       currentInject={currentInject}
       currentInjectIndex={currentInjectIndex}
+      totalInjects={activeInjects.length}
       timerSeconds={timerSeconds}
       maxTimerSeconds={maxTimerSeconds}
       timerRunning={timerRunning}
@@ -209,6 +231,7 @@ interface GameLayoutProps {
   };
   currentInject: Inject | null;
   currentInjectIndex: number;
+  totalInjects: number;
   timerSeconds: number;
   maxTimerSeconds: number;
   timerRunning: boolean;
@@ -237,6 +260,7 @@ function GameLayout({
   scores,
   currentInject,
   currentInjectIndex,
+  totalInjects,
   timerSeconds,
   maxTimerSeconds,
   timerRunning,
@@ -357,7 +381,7 @@ function GameLayout({
                 <InjectCard
                   inject={currentInject}
                   injectNumber={currentInjectIndex + 1}
-                  totalInjects={scenario.injects.length}
+                  totalInjects={totalInjects}
                   onSelectOption={onDecision}
                   disabled={disabled}
                   selectedRoles={selectedRoles as Role[]}

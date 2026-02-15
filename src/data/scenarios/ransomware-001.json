@@ -161,7 +161,7 @@
           "id": "q4_pf",
           "label": "Only reset passwords for accounts known to be compromised and increase monitoring.",
           "outcome_type": "partial_failure",
-          "feedback_text": "No, but… Insufficient scope. The attacker had domain admin — they created accounts you don't know about yet. However, your increased monitoring does catch re-entry within 6 hours, limiting additional damage.",
+          "feedback_text": "No, but… Insufficient scope. The attacker had domain admin — they create accounts you don't know about yet. However, your increased monitoring does catch re-entry within 6 hours, limiting additional damage.",
           "impact": { "security": -15, "business": 0, "reputation": -5 }
         },
         {
@@ -326,6 +326,669 @@
           "outcome_type": "critical_failure",
           "feedback_text": "No, and… The full R&D archive — 200GB including unreleased product designs and patent applications — is exfiltrated overnight. The data appears on a competitor's development roadmap three months later. Your IP advantage is gone.",
           "impact": { "security": -30, "business": -25, "reputation": -10 }
+        }
+      ]
+    },
+    {
+      "id": "q_09",
+      "order": 9,
+      "timestamp_display": "Day 1 — 06:00 PM",
+      "context": "Your backup systems show the last successful backup was 72 hours ago. The attacker encrypted the primary backup repository. However, you have an air-gapped backup vault at an offsite location and cloud backups with 30-day retention.",
+      "text": "What is your recovery strategy for the encrypted files?",
+      "timer_seconds": 90,
+      "targetRoles": ["IT_MANAGER", "DFIR"],
+      "options": [
+        {
+          "id": "q9_cs",
+          "label": "Immediately initiate recovery from the air-gapped vault while beginning cloud backup restoration in parallel. Prioritize critical systems and HR data.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The air-gapped vault provides a clean restore point from 5 days prior. You bring up critical HR systems within 8 hours. The cloud backups provide additional point-in-time options for files modified after the vault snapshot. Total data loss is minimal.",
+          "impact": { "security": 15, "business": -5, "reputation": 10 }
+        },
+        {
+          "id": "q9_ps",
+          "label": "Restore from the air-gapped backup vault but perform full integrity verification before bringing systems online.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The air-gapped restore works, but the 24-hour integrity verification process delays recovery. Business operations remain degraded for an extra day. However, the thorough verification catches a malware artifact that had made it into the backup.",
+          "impact": { "security": 10, "business": -10, "reputation": 5 }
+        },
+        {
+          "id": "q9_pf",
+          "label": "Attempt to recover from cloud backups first as they're more recent, then fall back to air-gapped if issues arise.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The cloud backups contain encrypted files from after the initial compromise. You waste 12 hours trying to restore corrupted data before switching to the air-gapped vault. However, you learn the importance of immutable backup strategies.",
+          "impact": { "security": 5, "business": -15, "reputation": 0 }
+        },
+        {
+          "id": "q9_cf",
+          "label": "Wait for the ransomware decryption key before attempting any recovery, to ensure no data corruption.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… While waiting for negotiation (which takes 48 hours), the backup retention window on cloud systems expires. You lose 3 days of data permanently. The air-gapped vault is now your only option, but recovery takes 3 days instead of 1.",
+          "impact": { "security": -5, "business": -30, "reputation": -15 }
+        }
+      ]
+    },
+    {
+      "id": "q_10",
+      "order": 10,
+      "timestamp_display": "Day 2 — 08:00 AM",
+      "context": "Law enforcement contacts you — the FBI's Cyber Division has identified your attacker as a known ransomware-as-a-service operation. They want to coordinate a takedown and need your cooperation.",
+      "text": "How do you engage with law enforcement?",
+      "timer_seconds": 90,
+      "targetRoles": ["CISO", "DFIR"],
+      "options": [
+        {
+          "id": "q10_cs",
+          "label": "Fully cooperate with the FBI, share all forensic evidence, IOCs, and malware samples. Request a dedicated FBI liaison for real-time updates.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… Your cooperation accelerates the investigation. The FBI shares real-time intelligence about the RaaS affiliate's tactics, helping you identify additional compromised systems. The public acknowledgment of law enforcement cooperation later helps your reputation.",
+          "impact": { "security": 10, "business": -5, "reputation": 15 }
+        },
+        {
+          "id": "q10_ps",
+          "label": "Share IOCs and malware samples but maintain control over the investigation timeline. Request confidentiality about ongoing operations.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… Good intelligence sharing. However, the FBI's parallel investigation discovers evidence of another breach at your company that your team had missed. The late discovery creates additional regulatory complications.",
+          "impact": { "security": 5, "business": -5, "reputation": 5 }
+        },
+        {
+          "id": "q10_pf",
+          "label": "Decline active cooperation but request threat intelligence sharing from the FBI for your own defensive purposes.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… You get valuable intelligence about the attacker's other victims. However, your lack of cooperation draws scrutiny from regulators who question what else you might be hiding. The FBI issues a subpoena for your forensic evidence.",
+          "impact": { "security": 0, "business": -10, "reputation": -10 }
+        },
+        {
+          "id": "q10_cf",
+          "label": "Refuse all cooperation, citing ongoing internal investigation and potential legal exposure.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The FBI views your obstruction as suspicious. A leaked memo suggests your company may have paid the ransom, triggering a Treasury investigation into potential sanctions violations. Your legal exposure increases dramatically.",
+          "impact": { "security": -10, "business": -20, "reputation": -25 }
+        }
+      ]
+    },
+    {
+      "id": "q_11",
+      "order": 11,
+      "timestamp_display": "Day 2 — 11:00 AM",
+      "context": "Your SOC detects new login attempts from previously compromised credentials. The attacker is attempting to regain access despite your password reset. MFA was enabled, but some privileged accounts still use legacy authentication protocols.",
+      "text": "How do you secure the authentication infrastructure?",
+      "timer_seconds": 90,
+      "targetRoles": ["SOC_LEAD", "IT_MANAGER"],
+      "options": [
+        {
+          "id": "q11_cs",
+          "label": "Block all legacy authentication protocols at the Azure AD/Entra ID level, enforce MFA for all users, and implement conditional access policies blocking logins from suspicious locations.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The legacy auth block stops the attacker's re-entry attempt immediately. The conditional access policies catch three other compromised accounts that were being used for lateral movement. Your security posture is now stronger than before the incident.",
+          "impact": { "security": 25, "business": -5, "reputation": 10 }
+        },
+        {
+          "id": "q11_ps",
+          "label": "Enable MFA for all privileged accounts and begin phasing out legacy authentication across the organization.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… MFA on privileged accounts stops most re-entry attempts. However, the attacker uses a service account that hasn't been migrated yet and maintains limited access for another 12 hours before being detected.",
+          "impact": { "security": 15, "business": -10, "reputation": 5 }
+        },
+        {
+          "id": "q11_pf",
+          "label": "Reset all privileged account passwords again and increase monitoring on authentication events.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The password reset stops the immediate threat. However, without blocking legacy authentication, the attacker returns within 24 hours using a different technique. The cat-and-mouse game continues.",
+          "impact": { "security": 5, "business": -5, "reputation": 0 }
+        },
+        {
+          "id": "q11_cf",
+          "label": "Temporarily disable all privileged accounts until the investigation concludes.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… You successfully lock out the attacker, but also lock out your entire IT administration team. Critical automation scripts fail. Vendor integrations break. The CEO can't access their email. The business impact of your own actions exceeds the damage from the attack.",
+          "impact": { "security": 10, "business": -35, "reputation": -15 }
+        }
+      ]
+    },
+    {
+      "id": "q_12",
+      "order": 12,
+      "timestamp_display": "Day 2 — 02:00 PM",
+      "context": "Cyber insurance adjustor schedules a call. Your policy has a $5M limit with a $250K deductible. They want to discuss coverage for business interruption, forensic investigation, and potential ransom payment.",
+      "text": "How do you engage with the cyber insurance claim?",
+      "timer_seconds": 90,
+      "targetRoles": ["CISO", "IT_MANAGER"],
+      "options": [
+        {
+          "id": "q12_cs",
+          "label": "Provide detailed documentation of all incident costs, engage the insurance-approved forensics firm, and file for business interruption coverage while the investigation continues.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… Your thorough documentation speeds approval. The insurance approves $1.2M in claims covering forensic costs, business interruption, and crisis response. The approved vendor relationships streamline recovery efforts.",
+          "impact": { "security": 5, "business": 15, "reputation": 5 }
+        },
+        {
+          "id": "q12_ps",
+          "label": "File the claim but continue using your existing DFIR team rather than switching to the insurance-approved vendor.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The claim is approved, but the insurer disputes $200K in costs because you didn't use their pre-approved vendor. However, your existing team delivers superior results, partially offsetting the coverage gap.",
+          "impact": { "security": 5, "business": 10, "reputation": 5 }
+        },
+        {
+          "id": "q12_pf",
+          "label": "Delay the insurance claim to avoid triggering a premium increase at renewal.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… You save your premium this year, but miss the 72-hour notification window required by policy. The insurer reduces coverage by 30%. You also delay recovery by managing costs internally instead of leveraging insurance resources.",
+          "impact": { "security": 0, "business": -10, "reputation": 0 }
+        },
+        {
+          "id": "q12_cf",
+          "label": "Don't file a claim at all — you want to avoid regulatory attention and keep the incident confidential.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… Your company absorbs $3M in incident costs directly. The failure to notify your insurer voids future coverage. When the breach becomes public (which it does), shareholders file a derivative lawsuit claiming directors failed to mitigate known risks.",
+          "impact": { "security": -5, "business": -25, "reputation": -20 }
+        }
+      ]
+    },
+    {
+      "id": "q_13",
+      "order": 13,
+      "timestamp_display": "Day 1 — 08:30 PM",
+      "context": "The attack has spread to your email server. Microsoft 365 audit logs show the attacker created mailbox rules to forward all executive emails to an external address. The CFO's inbox contains merger negotiation documents.",
+      "text": "What are your priorities for the email compromise?",
+      "timer_seconds": 90,
+      "targetRoles": ["DFIR", "SOC_LEAD"],
+      "options": [
+        {
+          "id": "q13_cs",
+          "label": "Immediately disconnect the email server, notify the M365 team, and revoke all OAuth tokens. Engage Microsoft's incident response team for forensic assistance.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The quick disconnect limits the data loss to approximately 200 emails before containment. Microsoft's IR team identifies that the attacker had created three other hidden forwarding rules that you hadn't detected yet.",
+          "impact": { "security": 20, "business": -10, "reputation": 10 }
+        },
+        {
+          "id": "q13_ps",
+          "label": "Remove the malicious mailbox rules and force re-authentication on all M365 accounts.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The immediate threat is neutralized. However, the attacker had already exported the email database 6 hours earlier. The merger documents appear on the dark web three weeks later, collapsing the deal.",
+          "impact": { "security": 10, "business": -20, "reputation": -10 }
+        },
+        {
+          "id": "q13_pf",
+          "label": "Monitor the forwarded emails to gather intelligence on what the attacker is interested in before taking action.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… Your monitoring reveals the attacker's entire exfiltration methodology. However, by the time you act, the attacker has forwarded 10,000 emails including executive communications, HR records, and customer data.",
+          "impact": { "security": -15, "business": -15, "reputation": -15 }
+        },
+        {
+          "id": "q13_cf",
+          "label": "Assume the email compromise is contained since MFA is enabled and take no additional action.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The attacker uses the compromised email access to launch phishing attacks against your Board of Directors. Two board members click the malicious links, providing the attacker with additional access. The SEC opens an inquiry into your cybersecurity controls.",
+          "impact": { "security": -25, "business": -15, "reputation": -25 }
+        }
+      ]
+    },
+    {
+      "id": "q_14",
+      "order": 14,
+      "timestamp_display": "Day 3 — 09:00 AM",
+      "context": "Your incident response timeline shows a 5-day gap between initial compromise and detection. The board wants to understand why your security tools didn't catch this sooner.",
+      "text": "How do you present the root cause analysis to the board?",
+      "timer_seconds": 90,
+      "targetRoles": ["CISO", "SOC_LEAD"],
+      "options": [
+        {
+          "id": "q14_cs",
+          "label": "Present a transparent root cause analysis highlighting detection failures, propose specific tool upgrades and process changes, and accept personal accountability while focusing on solutions.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The transparency builds board confidence. Your proposed $1.5M security investment is approved immediately. The board appreciates your accountability and lack of blame-shifting. Two directors personally thank you for the honest assessment.",
+          "impact": { "security": 15, "business": -5, "reputation": 20 }
+        },
+        {
+          "id": "q14_ps",
+          "label": "Present the technical details but attribute the failure to sophisticated attacker techniques that would have bypassed any standard defenses.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The board accepts the technical explanation but questions why you didn't have more advanced detection. They approve a reduced $800K budget with conditions. One board member expresses concerns about leadership's proactive security approach.",
+          "impact": { "security": 10, "business": 0, "reputation": 5 }
+        },
+        {
+          "id": "q14_pf",
+          "label": "Blame third-party vendor failures and suggest that the SOC was understaffed due to budget constraints.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The deflection temporarily deflects scrutiny. However, board members later learn the truth from other sources. The vendor relationship is damaged, and the SOC team morale collapses when they hear they've been blamed.",
+          "impact": { "security": -5, "business": 0, "reputation": -15 }
+        },
+        {
+          "id": "q14_cf",
+          "label": "Minimize the detection gap and suggest that response times were actually within industry averages.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… Your minimization is immediately debunked by the incident timeline you provided. The board loses confidence in your leadership. A CISO replacement is discussed in closed session. Your credibility is permanently damaged.",
+          "impact": { "security": -10, "business": -5, "reputation": -30 }
+        }
+      ]
+    },
+    {
+      "id": "q_15",
+      "order": 15,
+      "timestamp_display": "Day 3 — 01:00 PM",
+      "context": "Your cloud infrastructure (AWS) shows signs of compromise. The attacker created new IAM roles and provisioned compute resources in a region you've never used. CloudTrail logs show the attacker had admin-level credentials for 6 hours.",
+      "text": "How do you secure your cloud environment?",
+      "timer_seconds": 90,
+      "targetRoles": ["IT_MANAGER", "DFIR"],
+      "options": [
+        {
+          "id": "q15_cs",
+          "label": "Immediately rotate all AWS credentials, revoke all active sessions, delete the unauthorized IAM roles, and implement a travel restriction on credential usage.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The credential rotation locks out the attacker completely. You discover the attacker had provisioned $50K in crypto-mining resources that are immediately terminated. The travel restriction prevents future attacks using stolen credentials from foreign IPs.",
+          "impact": { "security": 25, "business": -10, "reputation": 10 }
+        },
+        {
+          "id": "q15_ps",
+          "label": "Delete the unauthorized IAM roles and increase CloudTrail logging retention.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The unauthorized roles are removed, but the attacker still has the underlying credentials. They create new roles in a different account within 24 hours. However, the enhanced logging provides early warning of their return.",
+          "impact": { "security": 15, "business": -5, "reputation": 5 }
+        },
+        {
+          "id": "q15_pf",
+          "label": "Wait until the investigation concludes before making changes to avoid disrupting legitimate cloud operations.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… Your caution is appreciated by the DevOps team. However, the attacker provisions additional resources during the delay, increasing your cloud bill by $30K and establishing persistent access through a Lambda function.",
+          "impact": { "security": -10, "business": -15, "reputation": 0 }
+        },
+        {
+          "id": "q15_cf",
+          "label": "Disable all AWS access until you can completely rebuild the cloud environment from scratch.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… You successfully prevent further attacker activity, but also disable all legitimate cloud services. Production applications go down. Customer-facing services are unavailable for 18 hours. The financial impact exceeds $500K.",
+          "impact": { "security": 10, "business": -40, "reputation": -20 }
+        }
+      ]
+    },
+    {
+      "id": "q_16",
+      "order": 16,
+      "timestamp_display": "Day 3 — 04:00 PM",
+      "context": "A junior SOC analyst discovers that the initial phishing email was actually reported to your security team 7 days ago but was marked as a false positive. The alert was closed without investigation.",
+      "text": "How do you handle this revelation about the missed detection?",
+      "timer_seconds": 90,
+      "targetRoles": ["SOC_LEAD", "CISO"],
+      "options": [
+        {
+          "id": "q16_cs",
+          "label": "Acknowledge the failure openly, implement a mandatory secondary review for all phishing reports, and create a new escalation path for potential incidents regardless of initial classification.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The SOC team's morale improves when they see systemic changes rather than individual blame. The new escalation path catches two similar attacks in the following month. The analyst who discovered the original email is promoted.",
+          "impact": { "security": 20, "business": -5, "reputation": 15 }
+        },
+        {
+          "id": "q16_ps",
+          "label": "Re-train the analyst who closed the false positive and update the detection rules to catch similar emails in the future.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The specific analyst receives additional training. However, without systemic changes, another similar phishing email slips through two weeks later. The training helps but doesn't address process gaps.",
+          "impact": { "security": 10, "business": 0, "reputation": 5 }
+        },
+        {
+          "id": "q16_pf",
+          "label": "Document the failure for compliance purposes but take no immediate action to change processes.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The documentation satisfies auditors. However, the SOC team feels scapegoated. Two senior analysts begin looking for new jobs. The cultural damage from the incident outweighs the technical lessons.",
+          "impact": { "security": 0, "business": 0, "reputation": -10 }
+        },
+        {
+          "id": "q16_cf",
+          "label": "Terminate the analyst who closed the original alert to set an example.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The harsh response creates a culture of fear. SOC analysts now over-report everything to avoid blame, flooding the team with low-quality alerts. Real threats get lost in the noise. The terminated analyst sues for wrongful termination.",
+          "impact": { "security": -15, "business": -10, "reputation": -25 }
+        }
+      ]
+    },
+    {
+      "id": "q_17",
+      "order": 17,
+      "timestamp_display": "Day 4 — 10:00 AM",
+      "context": "Your company's stock price has dropped 12% since the breach was announced. Institutional investors are requesting a call with leadership. The CFO is asking whether this should be treated as a material event requiring SEC disclosure.",
+      "text": "How do you advise on the investor communications and SEC disclosure?",
+      "timer_seconds": 90,
+      "targetRoles": ["CISO"],
+      "options": [
+        {
+          "id": "q17_cs",
+          "label": "Recommend immediate SEC 8-K disclosure with detailed incident description, remediation steps, and future security investments. Proactively schedule an investor call.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The proactive disclosure is praised by analysts as responsible corporate governance. Your stock recovers 60% of its losses within two weeks. Institutional investors commend your transparency. The SEC inquiry is closed with no action.",
+          "impact": { "security": 5, "business": 15, "reputation": 20 }
+        },
+        {
+          "id": "q17_ps",
+          "label": "Disclose the incident in general terms without technical details, and let the legal team determine if formal SEC filing is required.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The general disclosure satisfies immediate investor concerns. However, the ambiguity leads to speculation. Two law firms announce class-action investigations. The SEC requests additional information about your disclosure process.",
+          "impact": { "security": 0, "business": 5, "reputation": 0 }
+        },
+        {
+          "id": "q17_pf",
+          "label": "Delay any disclosure until the investigation is complete, citing ongoing forensic analysis.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The delay prevents premature disclosure of inaccurate information. However, a whistleblower leaks details to the press before you're ready. The stock drops another 8%. The delayed disclosure is viewed negatively by investors.",
+          "impact": { "security": 0, "business": -10, "reputation": -15 }
+        },
+        {
+          "id": "q17_cf",
+          "label": "Advise that no disclosure is necessary since the breach doesn't meet materiality thresholds.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The SEC opens a formal investigation into your disclosure controls. Three institutional investors reduce their holdings. A shareholder derivative lawsuit is filed alleging securities fraud. Your credibility with investors is destroyed.",
+          "impact": { "security": -5, "business": -25, "reputation": -35 }
+        }
+      ]
+    },
+    {
+      "id": "q_18",
+      "order": 18,
+      "timestamp_display": "Day 4 — 02:00 PM",
+      "context": "The attackers have published a blog post claiming responsibility and detailing how they breached your organization. They include specific technical details that match your internal findings. The post is being picked up by major cybersecurity news outlets.",
+      "text": "How do you respond to the attacker's public claim?",
+      "timer_seconds": 90,
+      "targetRoles": ["CISO", "SOC_LEAD"],
+      "options": [
+        {
+          "id": "q18_cs",
+          "label": "Publish your own technical disclosure validating the attacker's claims while highlighting your response and remediation. Offer to speak with media directly.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… Your transparency shifts the narrative from 'breached company' to 'company that responded well.' Security researchers praise your detailed technical response. The attacker's blog post is quickly overshadowed by your professional handling.",
+          "impact": { "security": 10, "business": 5, "reputation": 25 }
+        },
+        {
+          "id": "q18_ps",
+          "label": "Acknowledge the post exists but decline to verify specific details. Refer all inquiries to your official statement.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The cautious approach prevents misattribution. However, the security community critiques your lack of technical engagement. The attacker's blog becomes the primary source of information, shaping the narrative unfavorably.",
+          "impact": { "security": 5, "business": 0, "reputation": 5 }
+        },
+        {
+          "id": "q18_pf",
+          "label": "Issue a DMCA takedown notice against the attacker's blog post.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The takedown briefly removes the content. However, it reappears on alternative platforms within hours with additional details. The attempted censorship draws more attention to the post and makes your company appear defensive.",
+          "impact": { "security": 0, "business": -5, "reputation": -10 }
+        },
+        {
+          "id": "q18_cf",
+          "label": "Threaten legal action against any outlet that reports on the attacker's claims.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The threats trigger a Streisand effect. Major news outlets run stories about your heavy-handed response. The attacker's blog sees 10x normal traffic. Your company becomes a cautionary tale about how not to handle incident communications.",
+          "impact": { "security": -5, "business": -15, "reputation": -40 }
+        }
+      ]
+    },
+    {
+      "id": "q_19",
+      "order": 19,
+      "timestamp_display": "Day 4 — 05:00 PM",
+      "context": "Your threat hunting team discovers the attacker had access to your VPN infrastructure. They established persistent access through a compromised VPN concentrator and created new user accounts with vendor-level privileges.",
+      "text": "How do you remediate the VPN infrastructure compromise?",
+      "timer_seconds": 90,
+      "targetRoles": ["IT_MANAGER", "DFIR"],
+      "options": [
+        {
+          "id": "q19_cs",
+          "label": "Decommission the compromised VPN concentrator, replace it with a fresh unit, implement certificate-based authentication, and force re-enrollment for all VPN clients.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The fresh hardware eliminates all attacker persistence. Certificate-based auth eliminates password-based attacks entirely. The re-enrollment process catches three other compromised client certificates that are revoked immediately.",
+          "impact": { "security": 25, "business": -10, "reputation": 10 }
+        },
+        {
+          "id": "q19_ps",
+          "label": "Reset all VPN user passwords and implement MFA for VPN access.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… MFA stops most re-entry attempts. However, the compromised VPN concentrator still has firmware-level malware. The attacker returns through the hardware backdoor within a week, requiring a second incident response.",
+          "impact": { "security": 15, "business": -5, "reputation": 5 }
+        },
+        {
+          "id": "q19_pf",
+          "label": "Update the VPN software to the latest version and increase logging.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The software update addresses known vulnerabilities. However, the attacker had established hardware-level persistence that survives the update. They maintain access while you believe the issue is resolved.",
+          "impact": { "security": 5, "business": 0, "reputation": 0 }
+        },
+        {
+          "id": "q19_cf",
+          "label": "Temporarily disable all VPN access until the infrastructure can be replaced.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… You successfully lock out the attacker, but also disable 3,000 remote workers. Sales team can't access CRM. Support engineers can't help customers. The business impact of disabling VPN exceeds $200K per day.",
+          "impact": { "security": 10, "business": -30, "reputation": -10 }
+        }
+      ]
+    },
+    {
+      "id": "q_20",
+      "order": 20,
+      "timestamp_display": "Day 5 — 09:00 AM",
+      "context": "The dust is settling. You've been asked to develop a comprehensive 12-month security roadmap to prevent future incidents. The board has approved a substantial budget but wants quarterly progress reports.",
+      "text": "What is your proposed security transformation roadmap?",
+      "timer_seconds": 90,
+      "targetRoles": ["CISO", "IT_MANAGER", "SOC_LEAD", "DFIR"],
+      "options": [
+        {
+          "id": "q20_cs",
+          "label": "Propose a phased approach: Zero-trust architecture, 24/7 SOC with advanced threat hunting, automated SOAR deployment, regular penetration testing, and company-wide security awareness with simulated phishing.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The comprehensive roadmap is approved with a $4M budget. The phased approach demonstrates strategic thinking. By month 6, simulated phishing click rates drop from 25% to 8%. The SOAR deployment reduces MTTR by 70%.",
+          "impact": { "security": 30, "business": -15, "reputation": 25 }
+        },
+        {
+          "id": "q20_ps",
+          "label": "Focus on immediate tactical improvements: better EDR, enhanced logging, and additional security training.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The tactical improvements address immediate gaps. However, the lack of strategic vision means you'll be reacting to threats rather than preventing them. The board approves $1.5M but questions your long-term strategy.",
+          "impact": { "security": 20, "business": -5, "reputation": 10 }
+        },
+        {
+          "id": "q20_pf",
+          "label": "Propose hiring a fractional CISO and conducting a comprehensive risk assessment before making major investments.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The cautious approach demonstrates fiduciary responsibility. However, the 3-month assessment delay leaves you vulnerable. Two more minor incidents occur during the assessment period. The board questions whether you're the right leader.",
+          "impact": { "security": 5, "business": -5, "reputation": 0 }
+        },
+        {
+          "id": "q20_cf",
+          "label": "Request budget for a new security tool that the vendor claims would have prevented this attack.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The board sees through the vendor-driven approach. The $2M tool purchase is approved but without supporting processes, it provides minimal value. The board begins exploring CISO alternatives. Your career at the company is effectively over.",
+          "impact": { "security": 10, "business": -20, "reputation": -25 }
+        }
+      ]
+    },
+    {
+      "id": "q_21",
+      "order": 21,
+      "timestamp_display": "Day 5 — 11:30 AM",
+      "context": "A partner organization reaches out — their security team found your proprietary tooling being sold on a dark web marketplace. It's a custom incident response script your DFIR team developed. The attacker must have stolen it during the breach.",
+      "text": "How do you handle the intellectual property theft?",
+      "timer_seconds": 90,
+      "targetRoles": ["DFIR", "CISO"],
+      "options": [
+        {
+          "id": "q21_cs",
+          "label": "Issue a DMCA takedown, notify the tool's original authors within your company, and conduct a source code audit to understand what was exfiltrated. Update your data classification policies.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The takedown removes the listing within 48 hours. The code audit reveals limited exposure — only compiled binaries, not source code. The incident triggers a company-wide data classification initiative that prevents future leaks.",
+          "impact": { "security": 10, "business": -5, "reputation": 15 }
+        },
+        {
+          "id": "q21_ps",
+          "label": "Issue a DMCA takedown and assume the exposure is limited since it was only your public tooling, not core IP.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The takedown succeeds, but the damage is done. Competitors had already downloaded the tools. However, the incident prompts a review of your internal security practices that identifies several other gaps.",
+          "impact": { "security": 5, "business": 0, "reputation": 5 }
+        },
+        {
+          "id": "q21_pf",
+          "label": "Ignore the listing since it's just utility scripts, not core business IP.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The tools are indeed publicly available on GitHub anyway. However, the perception that you don't take IP theft seriously leads a key engineer to leave for a competitor, taking institutional knowledge with them.",
+          "impact": { "security": 0, "business": -5, "reputation": -5 }
+        },
+        {
+          "id": "q21_cf",
+          "label": "Contact the dark web seller directly to negotiate purchase of your own tools to remove them.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The seller acknowledges your request and increases the price 10x. The negotiation is observed by threat actors who now know the value of your tools. The listing stays up with increased traffic. Your attempted cover-up is leaked to the press.",
+          "impact": { "security": -10, "business": -15, "reputation": -30 }
+        }
+      ]
+    },
+    {
+      "id": "q_22",
+      "order": 22,
+      "timestamp_display": "Day 5 — 03:00 PM",
+      "context": "Your backup verification process reveals that 15% of restored files contain malware from the point-in-time of the backup. The ransomware had been propagating for days before detection, and some backups captured encrypted files.",
+      "text": "How do you ensure a clean recovery?",
+      "timer_seconds": 90,
+      "targetRoles": ["IT_MANAGER", "DFIR"],
+      "options": [
+        {
+          "id": "q22_cs",
+          "label": "Implement a multi-stage recovery: restore to isolated environments, run comprehensive malware scanning, validate file integrity against known-good hashes, then promote to production.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The staged recovery catches malware in 8% of restored files that are replaced from alternative sources. The hash verification identifies corrupted documents that are reconstructed from cloud history. Production systems come up clean.",
+          "impact": { "security": 20, "business": -10, "reputation": 15 }
+        },
+        {
+          "id": "q22_ps",
+          "label": "Restore from the most recent clean backup point and accept some data loss from the intervening period.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… You lose 3 days of data from the period between the clean backup and the attack. However, the systems come up clean. Business operations resume within 24 hours. Users complain about lost work but appreciate the quick recovery.",
+          "impact": { "security": 15, "business": -15, "reputation": 5 }
+        },
+        {
+          "id": "q22_pf",
+          "label": "Attempt to clean the infected backups using malware remediation tools before restoration.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The remediation tools successfully clean 60% of infected files. However, 40% remain corrupted and must be restored from alternative sources. The process takes 3 days, extending downtime significantly.",
+          "impact": { "security": 5, "business": -20, "reputation": 0 }
+        },
+        {
+          "id": "q22_cf",
+          "label": "Restore all files as-is and rely on endpoint protection to catch any remaining malware.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The ransomware re-infects production systems within hours of restoration. You're back to square one. The board demands to know why you didn't follow established recovery procedures. Your credibility is destroyed.",
+          "impact": { "security": -25, "business": -35, "reputation": -20 }
+        }
+      ]
+    },
+    {
+      "id": "q_23",
+      "order": 23,
+      "timestamp_display": "Day 5 — 06:00 PM",
+      "context": "A regulatory body (not your primary jurisdiction) contacts you — one of your subsidiary companies in their region was also impacted by the attack. They want a full incident report within 72 hours under their local data protection law.",
+      "text": "How do you handle the regulatory inquiry from the secondary jurisdiction?",
+      "timer_seconds": 90,
+      "targetRoles": ["CISO"],
+      "options": [
+        {
+          "id": "q23_cs",
+          "label": "Engage local legal counsel, provide a thorough incident report demonstrating cooperation, and implement additional safeguards specific to that jurisdiction's requirements.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The proactive cooperation results in a favorable outcome. The regulator closes the inquiry with a commendation for your responsive handling. The incident drives harmonization of security practices across all subsidiaries.",
+          "impact": { "security": 10, "business": -5, "reputation": 15 }
+        },
+        {
+          "id": "q23_ps",
+          "label": "Provide a general incident summary but decline to share specific technical details citing ongoing investigation.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The general summary satisfies immediate requirements. However, the regulator imposes a 6-month audit requirement. The audit uncovers additional gaps in subsidiary security that require remediation.",
+          "impact": { "security": 5, "business": -5, "reputation": 5 }
+        },
+        {
+          "id": "q23_pf",
+          "label": "Ignore the inquiry since your primary jurisdiction's regulator is already engaged.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The local regulator is understanding of your resource constraints. However, they issue a formal warning about jurisdictional cooperation. The incident is cited in their annual report as an example of multi-jurisdictional challenges.",
+          "impact": { "security": 0, "business": 0, "reputation": -10 }
+        },
+        {
+          "id": "q23_cf",
+          "label": "Claim the subsidiary is a separate legal entity and your incident response doesn't extend to their operations.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The regulator sees through the legal technicality. They issue a massive fine under their data protection law. The press covers the 'responsibility dodging.' Your parent company's stock drops another 5%.",
+          "impact": { "security": -5, "business": -30, "reputation": -35 }
+        }
+      ]
+    },
+    {
+      "id": "q_24",
+      "order": 24,
+      "timestamp_display": "Day 6 — 10:00 AM",
+      "context": "One of your key vendors reaches out — they found indicators that your incident is connected to a broader supply chain attack. Several other companies in your industry received similar phishing emails from the same campaign.",
+      "text": "How do you coordinate with industry peers on this threat intelligence?",
+      "timer_seconds": 90,
+      "targetRoles": ["SOC_LEAD", "DFIR", "CISO"],
+      "options": [
+        {
+          "id": "q24_cs",
+          "label": "Establish an industry coalition, share full IOCs and TTPs through your ISAC, and coordinate defensive strategies with peer companies.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The coalition shares intelligence that helps three other companies detect early-stage intrusions. Your company is recognized as a leader in industry cooperation. The collective defense effort disrupts the attacker's campaign across the sector.",
+          "impact": { "security": 20, "business": 5, "reputation": 25 }
+        },
+        {
+          "id": "q24_ps",
+          "label": "Share IOCs with the ISAC but decline direct coordination with individual companies.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The IOC sharing helps the broader community. However, one peer company that could have benefited from direct coordination suffers a similar incident. Your reputation in the industry remains neutral.",
+          "impact": { "security": 10, "business": 0, "reputation": 10 }
+        },
+        {
+          "id": "q24_pf",
+          "label": "Keep the intelligence internal to maintain competitive advantage in security.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… Your proprietary threat intelligence remains protected. However, a security researcher publishes the connection anyway, making your company look secretive. Industry peers criticize your lack of cooperation.",
+          "impact": { "security": 5, "business": 5, "reputation": -15 }
+        },
+        {
+          "id": "q24_cf",
+          "label": "Deny any connection to the broader campaign to avoid regulatory attention.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… Your denial is quickly debunked by the vendor's findings. The regulatory scrutiny intensifies across all affected companies. Your company's reputation in the industry takes a major hit. Peer companies refuse to share intelligence with you in the future.",
+          "impact": { "security": -10, "business": -10, "reputation": -30 }
+        }
+      ]
+    },
+    {
+      "id": "q_25",
+      "order": 25,
+      "timestamp_display": "Day 6 — 02:00 PM",
+      "context": "Post-incident analysis is complete. You've identified that the attacker's initial access came through a vulnerable VPN gateway that had a known critical CVE. A patch had been available for 48 hours but your vulnerability management process failed to deploy it.",
+      "text": "How do you address the vulnerability management failure?",
+      "timer_seconds": 90,
+      "targetRoles": ["IT_MANAGER", "SOC_LEAD"],
+      "options": [
+        {
+          "id": "q25_cs",
+          "label": "Implement automated patch management with critical CVE SLAs, establish a dedicated vulnerability triage team, and implement compensating controls for internet-facing systems.",
+          "outcome_type": "critical_success",
+          "feedback_text": "Yes, and… The automated patch deployment reduces mean time to patch from 14 days to 4 hours for critical vulnerabilities. The compensating controls include WAF rules and enhanced monitoring that catch two other exploitation attempts in the following month.",
+          "impact": { "security": 30, "business": -10, "reputation": 15 }
+        },
+        {
+          "id": "q25_ps",
+          "label": "Manually review all critical vulnerabilities weekly and prioritize patching internet-facing systems.",
+          "outcome_type": "partial_success",
+          "feedback_text": "Yes, but… The manual process catches critical CVEs within 5 days on average. However, the process doesn't scale. A medium-severity vulnerability in an internal system is missed and later becomes an attack vector, though it's contained quickly.",
+          "impact": { "security": 15, "business": -5, "reputation": 5 }
+        },
+        {
+          "id": "q25_pf",
+          "label": "Implement a bug bounty program to incentivize external vulnerability discovery.",
+          "outcome_type": "partial_failure",
+          "feedback_text": "No, but… The bug bounty generates useful reports. However, it's a reactive rather than proactive approach. The first valid bug bounty report arrives 3 weeks after launch — after another security incident that could have been prevented.",
+          "impact": { "security": 5, "business": -5, "reputation": 5 }
+        },
+        {
+          "id": "q25_cf",
+          "label": "Blame the vendor for releasing a vulnerable product and focus on legal recourse.",
+          "outcome_type": "critical_failure",
+          "feedback_text": "No, and… The legal threats distract from actual security improvements. Your vulnerability management process remains unchanged. A similar attack occurs 2 months later through the same vulnerability class. The board terminates your employment.",
+          "impact": { "security": -20, "business": -15, "reputation": -25 }
         }
       ]
     }

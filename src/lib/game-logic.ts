@@ -23,18 +23,17 @@ function shuffle<T>(arr: readonly T[]): T[] {
 }
 
 /**
- * Generate 5 session questions from a scenario, filtered by the user's
- * selected roles. The "Mixer" performs the following logic:
+ * Generate session questions from a scenario, filtered by the user's
+ * selected roles with STRICT filtering rules:
  *
- * 1. Filter the scenario's question pool to find questions whose
- *    `targetRoles` overlap with at least one of the user's `selectedRoles`.
- * 2. From this filtered pool, randomly select exactly 5 questions.
- * 3. If multiple roles are selected, the 5 questions will be a natural mix
- *    of questions targeting those roles.
- * 4. If fewer than 5 matching questions exist, all matching questions are
- *    returned (shuffled).
+ * Rule 1: A question is included IF AND ONLY IF it has a universal tag
+ *         (targetRoles includes "ALL") OR at least ONE of its targetRoles
+ *         matches the user's selectedRoles.
+ * Rule 2: If the filtered pool has > 5 questions, shuffle and pick exactly 5.
+ * Rule 3 (No Padding): If the strictly filtered pool has fewer than 5
+ *         questions, return only the available questions (DO NOT pad).
  *
- * @param scenario  - The full scenario data (new format with `questions`)
+ * @param scenario  - The full scenario data
  * @param userRoles - The roles the user selected (1 or more)
  * @returns An array of up to 5 ScenarioQuestion objects, randomly ordered
  */
@@ -44,12 +43,21 @@ export function generateSessionQuestions(
 ): ScenarioQuestion[] {
   if (userRoles.length === 0) return [];
 
-  // Step 1: Filter questions matching at least one selected role
-  const matchingQuestions = scenario.questions.filter((q) =>
-    q.targetRoles.some((role) => userRoles.includes(role))
-  );
+  const isUniversalQuestion = (targetRoles: ScenarioRole[]): boolean => {
+    return targetRoles.includes("ALL" as ScenarioRole);
+  };
 
-  // Step 2: Shuffle and pick up to SESSION_QUESTION_COUNT
+  const matchingQuestions = scenario.questions.filter((q) => {
+    if (isUniversalQuestion(q.targetRoles)) {
+      return true;
+    }
+    return q.targetRoles.some((role) => userRoles.includes(role));
+  });
+
+  if (matchingQuestions.length <= SESSION_QUESTION_COUNT) {
+    return shuffle(matchingQuestions);
+  }
+
   const shuffled = shuffle(matchingQuestions);
   return shuffled.slice(0, SESSION_QUESTION_COUNT);
 }
