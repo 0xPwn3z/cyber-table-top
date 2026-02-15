@@ -15,6 +15,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileWarning,
+  Rocket,
+  Loader2,
 } from "lucide-react";
 
 // ============================================================================
@@ -65,13 +67,16 @@ export function ScenarioUploadModal({
   // ── Process JSON string ──
   const processJSON = useCallback(
     (rawText: string) => {
+      console.log("[ScenarioUpload] Processing JSON input...");
       setValidation({ status: "validating" });
 
       // Parse JSON
       let parsed: unknown;
       try {
         parsed = JSON.parse(rawText);
-      } catch {
+        console.log("[ScenarioUpload] JSON parsed successfully", parsed);
+      } catch (e) {
+        console.error("[ScenarioUpload] JSON parse failed:", e);
         setValidation({
           status: "error",
           errors: ["Invalid JSON syntax. Please check for missing commas, brackets, or quotes."],
@@ -86,14 +91,25 @@ export function ScenarioUploadModal({
       const result = validateScenarioJSON(sanitized);
 
       if (result.success) {
+        console.log("[ScenarioUpload] Zod validation PASSED:", result.data.meta.title);
         setValidation({ status: "success", scenario: result.data });
-        onUploadSuccess?.(result.data);
+        // NOTE: We do NOT call onUploadSuccess here.
+        // The user must explicitly click "Launch Simulation" to proceed.
       } else {
+        console.error("[ScenarioUpload] Zod validation FAILED:", result.errors);
         setValidation({ status: "error", errors: result.errors });
       }
     },
-    [onUploadSuccess]
+    []
   );
+
+  // ── Launch handler — only called when user clicks "Launch Simulation" ──
+  const handleLaunch = useCallback(() => {
+    if (validation.status === "success" && validation.scenario) {
+      console.log("[ScenarioUpload] Launching scenario:", validation.scenario.meta.id);
+      onUploadSuccess?.(validation.scenario);
+    }
+  }, [validation, onUploadSuccess]);
 
   // ── File handling ──
   const handleFile = useCallback(
@@ -322,11 +338,18 @@ export function ScenarioUploadModal({
           )}
 
           {/* Validation Results */}
+          {validation.status === "validating" && (
+            <div className="mt-6 flex items-center justify-center gap-3 py-4">
+              <Loader2 className="h-5 w-5 text-primary animate-spin" />
+              <span className="text-sm text-slate-400">Validating scenario schema...</span>
+            </div>
+          )}
+
           {validation.status === "success" && validation.scenario && (
-            <div className="mt-6 rounded-xl border border-green-500/30 bg-green-950/20 p-4 animate-in slide-in-from-bottom-2 duration-300">
+            <div className="mt-6 rounded-xl border border-green-500/30 bg-green-950/20 p-5 animate-in slide-in-from-bottom-2 duration-300">
               <div className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0 mt-0.5" />
-                <div>
+                <div className="flex-1">
                   <p className="text-green-400 font-semibold text-sm">
                     Scenario validated successfully!
                   </p>
@@ -335,12 +358,21 @@ export function ScenarioUploadModal({
                     {validation.scenario.questions.length} questions,{" "}
                     {validation.scenario.meta.difficulty} difficulty
                   </p>
-                  <button
-                    onClick={handleClose}
-                    className="mt-3 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white text-xs font-semibold transition-colors"
-                  >
-                    Done
-                  </button>
+                  <div className="flex gap-3 mt-4">
+                    <button
+                      onClick={handleLaunch}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-green-600 hover:bg-green-500 text-white text-sm font-bold transition-all shadow-lg shadow-green-600/20 active:scale-95"
+                    >
+                      <Rocket className="h-4 w-4" />
+                      Launch Simulation
+                    </button>
+                    <button
+                      onClick={handleClose}
+                      className="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

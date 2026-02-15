@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useOnboardingStore } from "@/lib/onboarding-store";
 import type { OrganizationSector, SectorOption } from "@/types/onboarding";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,7 @@ import {
   BadgeCheck,
   Lock,
   Check,
+  Home,
 } from "lucide-react";
 
 // ============================================================================
@@ -73,6 +75,7 @@ function SectorIcon({
 // ============================================================================
 
 export function SectorStep() {
+  const router = useRouter();
   const { config, setSector, nextStep, isStepValid } = useOnboardingStore();
   const selectedSector = config.organizationSector;
   const canContinue = isStepValid(1);
@@ -165,7 +168,16 @@ export function SectorStep() {
         </div>
 
         {/* ── Navigation Footer ── */}
-        <div className="mt-12 flex items-center justify-end">
+        <div className="mt-12 flex items-center justify-between">
+          {/* Back to Dashboard Button */}
+          <button
+            onClick={() => router.push("/")}
+            className="flex items-center space-x-2 text-slate-400 hover:text-primary transition-colors group py-3 px-6"
+          >
+            <Home className="h-5 w-5 group-hover:scale-110 transition-transform" />
+            <span className="text-sm font-semibold">Back to Dashboard</span>
+          </button>
+
           <div className="flex items-center space-x-6">
             <p className="hidden md:block text-xs text-slate-500 uppercase tracking-widest font-semibold">
               Ready to proceed?

@@ -23,7 +23,7 @@
       "timestamp_display": "Day 1 — 09:15 AM",
       "context": "SOC Alert: Highly anomalous outbound traffic detected from the HR file server to a known C2 IP address in Eastern Europe. Multiple .encrypted file extensions appearing across shared drives.",
       "text": "What is your immediate containment strategy?",
-      "timer_seconds": 30,
+      "timer_seconds": 90,
       "targetRoles": ["SOC_LEAD", "IT_MANAGER"],
       "options": [
         {
@@ -62,7 +62,7 @@
       "timestamp_display": "Day 1 — 10:30 AM",
       "context": "The attackers have posted a sample of employee PII data on a dark-web leak site. Journalists from two national outlets are calling your PR department for comment.",
       "text": "How do you handle the external communication crisis?",
-      "timer_seconds": 45,
+      "timer_seconds": 90,
       "targetRoles": ["CISO"],
       "options": [
         {
@@ -101,7 +101,7 @@
       "timestamp_display": "Day 1 — 02:00 PM",
       "context": "The attackers have sent a ransom note demanding 50 BTC (~$2.1M). They claim to have exfiltrated 150GB of data including employee SSNs, medical records, and executive emails. They threaten to publish everything in 48 hours.",
       "text": "How do you respond to the ransom demand?",
-      "timer_seconds": 60,
+      "timer_seconds": 90,
       "targetRoles": ["CISO", "DFIR"],
       "options": [
         {
@@ -140,7 +140,7 @@
       "timestamp_display": "Day 2 — 09:00 AM",
       "context": "Your DFIR team has identified the initial attack vector: a phishing email with a malicious macro sent to an HR coordinator 5 days ago. The attacker used stolen credentials to move laterally via RDP. EDR logs show the attacker had domain admin privileges for 3 days.",
       "text": "What is your priority for recovery and hardening?",
-      "timer_seconds": 45,
+      "timer_seconds": 90,
       "targetRoles": ["IT_MANAGER", "SOC_LEAD"],
       "options": [
         {
@@ -179,7 +179,7 @@
       "timestamp_display": "Day 3 — 11:00 AM",
       "context": "The immediate crisis is stabilizing. The board has called an emergency meeting and wants a post-incident action plan. Regulators have sent a formal inquiry letter. Employee morale is low — several key engineers are considering leaving.",
       "text": "What is your strategic recommendation to the board?",
-      "timer_seconds": 60,
+      "timer_seconds": 90,
       "targetRoles": ["CISO", "IT_MANAGER"],
       "options": [
         {
@@ -218,7 +218,7 @@
       "timestamp_display": "Day 1 — 11:45 AM",
       "context": "DFIR has obtained a memory dump from the initial compromised HR server. The malware sample shows characteristics of a known APT group's toolkit. Your threat intel platform shows IOCs matching campaigns against three other organizations in your sector this month.",
       "text": "How do you leverage this forensic intelligence?",
-      "timer_seconds": 45,
+      "timer_seconds": 90,
       "targetRoles": ["DFIR", "SOC_LEAD"],
       "options": [
         {
@@ -257,7 +257,7 @@
       "timestamp_display": "Day 2 — 03:00 PM",
       "context": "HR is in crisis. 200 employees have received notification that their PII was exposed. Several employees are posting angry messages on internal Slack channels. Two employees have already contacted lawyers. The Chief People Officer wants guidance.",
       "text": "How do you manage the internal employee crisis?",
-      "timer_seconds": 45,
+      "timer_seconds": 90,
       "targetRoles": ["CISO", "IT_MANAGER"],
       "options": [
         {
@@ -296,7 +296,7 @@
       "timestamp_display": "Day 1 — 04:30 PM",
       "context": "Network monitoring shows suspicious DNS queries originating from the R&D subnet. The queries use DNS tunneling to exfiltrate data to an external server. R&D houses your most valuable trade secrets and upcoming product designs.",
       "text": "How do you handle the potential R&D data exfiltration?",
-      "timer_seconds": 30,
+      "timer_seconds": 90,
       "targetRoles": ["SOC_LEAD", "DFIR"],
       "options": [
         {

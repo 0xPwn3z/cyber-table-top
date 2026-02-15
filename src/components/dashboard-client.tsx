@@ -3,9 +3,11 @@
 import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { Scenario } from "@/types/game";
+import type { ScenarioData } from "@/types/scenario";
 import { ScenarioCard } from "@/components/scenario-card";
 import { ThreatMapBackground } from "@/components/threat-map-background";
 import { ScenarioUploadModal } from "@/components/scenario-upload-modal";
+import { addScenario } from "@/lib/scenarios";
 import { useGameStore } from "@/lib/store";
 import { useOnboardingStore } from "@/lib/onboarding-store";
 import {
@@ -40,10 +42,39 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
   const [activeFilter, setActiveFilter] = useState<string>("All Scenarios");
   const [sortBy, setSortBy] = useState<string>("Recommended");
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [localScenarios, setLocalScenarios] = useState<Scenario[]>(scenarios);
   const router = useRouter();
   const { isSimulationActive, activeScenarioId, phase, resetSimulation } =
     useGameStore();
   const { resetOnboarding } = useOnboardingStore();
+
+  // ── Upload-to-Play handler ──
+  const handleUploadSuccess = useCallback(
+    (data: ScenarioData) => {
+      console.log("[Dashboard] Upload success — registering scenario:", data.meta.id);
+
+      // 1. Register in the global scenario registry
+      const legacy = addScenario(data);
+
+      // 2. Add to local state so it appears in the grid immediately
+      setLocalScenarios((prev) => {
+        if (prev.some((s) => s.meta.id === legacy.meta.id)) return prev;
+        return [...prev, legacy];
+      });
+
+      // 3. Reset any stale session state
+      resetSimulation();
+      resetOnboarding();
+
+      // 4. Close the modal
+      setUploadModalOpen(false);
+
+      // 5. Navigate to the onboarding/setup page for the new scenario
+      console.log("[Dashboard] Navigating to setup for:", legacy.meta.id);
+      router.push(`/game/${legacy.meta.id}/setup`);
+    },
+    [router, resetSimulation, resetOnboarding]
+  );
 
   // Check if there's an active, in-progress simulation session
   const hasActiveSession =
@@ -73,7 +104,7 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
   ]);
 
   const filteredScenarios = useMemo(() => {
-    let filtered = [...scenarios];
+    let filtered = [...localScenarios];
 
     // Search filter
     if (searchQuery.trim()) {
@@ -111,7 +142,7 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
     }
 
     return filtered;
-  }, [scenarios, searchQuery, activeFilter, sortBy]);
+  }, [localScenarios, searchQuery, activeFilter, sortBy]);
 
   return (
     <div className="min-h-screen bg-transparent relative">
@@ -299,6 +330,7 @@ export function DashboardClient({ scenarios }: DashboardClientProps) {
       <ScenarioUploadModal
         open={uploadModalOpen}
         onClose={() => setUploadModalOpen(false)}
+        onUploadSuccess={handleUploadSuccess}
       />
     </div>
   );
